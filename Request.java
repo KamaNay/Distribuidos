@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class Request {
-	
-	private static final Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     public static JsonObject createRequest(String operation) {
         JsonObject requestJson = new JsonObject();
@@ -24,24 +23,17 @@ public class Request {
     }
 
     public static String sendRequest(JsonObject requestJson, PrintWriter out, BufferedReader in) throws IOException {
-    	out.println(requestJson.toString());
-        System.out.println(requestJson.toString());
+        out.println(requestJson.toString());
         return in.readLine();
     }
 
-    public static JsonObject createResponse(String operation, String status, String userDataJson) {
+    public static JsonObject createResponse(String operation, String status, String token) {
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("operation", operation);
         responseJson.addProperty("status", status);
         JsonObject data = new JsonObject();
-        data.addProperty("token", userDataJson);
+        data.addProperty("token", token);
         responseJson.add("data", data);
         return responseJson;
     }
-
-    public static JsonObject createResponse(String operation, String status, JsonObject userDataJson) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createResponse'");
-    }
-
 }
