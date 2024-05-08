@@ -4,8 +4,7 @@ import java.io.PrintWriter;
 
 import com.google.gson.JsonObject;
 
-public class Singup {
-	
+public class Signup {
     public static void signup(BufferedReader reader, PrintWriter out, BufferedReader in) throws IOException {
         System.out.println("Digite o endereço de email:");
         String email = reader.readLine();
