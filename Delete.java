@@ -5,15 +5,13 @@ import java.io.PrintWriter;
 import com.google.gson.JsonObject;
 
 public class Delete {
-	
     public static void delete(BufferedReader reader, PrintWriter out, BufferedReader in, String token) throws IOException {
-    	
-    	if (token == null || token.isEmpty()) {
-            System.out.println("Por favor, logue antes de excluir a conta.");
+        if (token == null) {
+            System.out.println("Por favor, faça login antes de excluir a conta.");
             return;
         }
-    	    	
-        System.out.println("Digite o email da conta que deseja exluir:");
+
+        System.out.println("Digite o endereço de email para excluir a conta:");
         String email = reader.readLine();
 
         JsonObject requestJson = Request.createRequest("DELETE_ACCOUNT_CANDIDATE");
