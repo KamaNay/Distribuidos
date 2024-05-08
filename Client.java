@@ -2,75 +2,68 @@ import java.io.*;
 import java.net.Socket;
 
 public class Client {
-	public static void main(String[] args) {
+    private static String token = null;
 
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-			String serverIP = putIP(reader);
+    public static void main(String[] args) {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Digite o endereço IP do servidor:");
+            String serverIP = reader.readLine();
 
-			Socket socket = new Socket(serverIP, 21234);
-			System.out.println("Conectado ao servidor: " + serverIP);
+            Socket socket = new Socket(serverIP, 21234);
+            System.out.println("Conectado ao servidor: " + serverIP);
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-			String token = null;
+            // Loop principal do cliente
+            while (true) {
+                System.out.println("Escolha uma opção:");
+                System.out.println("1. Login");
+                System.out.println("2. Cadastro");
+                System.out.println("3. Atualização de dados");
+                System.out.println("4. Exclusão de conta");
+                System.out.println("5. Sair");
+                System.out.println("6. Logout");
+                System.out.println("7. Consultar informações da conta");
+                int option;
+                try {
+                    option = Integer.parseInt(reader.readLine());
+                } catch (NumberFormatException e) {
+                    System.out.println("Opção inválida. Por favor, digite novamente.");
+                    continue;
+                }
 
-			// Loop principal
-			while (true) {
-				System.out.println("Escolha uma operação:");
-				System.out.println("1. Login");
-				System.out.println("2. Cadastro");
-				System.out.println("3. Atualizar");
-				System.out.println("4. Dados");
-				System.out.println("5. Excluir");
-				System.out.println("6. Sair");
+                switch (option) {
+                    case 1:
+                        token = Login.login(reader, out, in, token);
+                        break;
+                    case 2:
+                        Signup.signup(reader, out, in);
+                        break;
+                    case 3:
+                        Update.update(reader, out, in, token);
+                        break;
+                    case 4:
+                        Delete.delete(reader, out, in, token);
+                        break;
+                    case 5:
+                        System.out.println("Encerrando o cliente...");
+                        socket.close();
+                        return;
+                    case 6:
+                        token = Logout.logout(reader, out, in, token);
+                        break;
+                    case 7:
+                        Read.read(reader, out, in, token);
+                        break;
+                    default:
+                        System.out.println("Opção inválida. Por favor, digite novamente.");
+                }
+            }
 
-				int option;
-				try {
-					option = Integer.parseInt(reader.readLine());
-				} catch (NumberFormatException e) {
-					System.out.println("Opção inválida.");
-					continue;
-				}
-
-				switch (option) {
-					case 1:
-						token = Login.login(reader, out, in);
-						break;
-					case 2:
-						Singup.signup(reader, out, in);
-						break;
-					case 3:
-						Update.update(reader, out, in, token);
-						break;
-					case 4:
-						if (token != null) {
-							Read.read(token, out, in);
-						} else {
-							System.out.println("Faça login primeiro para acessar os dados da conta.");
-						}
-						break;
-					case 5:
-						Delete.delete(reader, out, in, token);
-						break;
-					case 6:
-						Logout.logout(reader, out, in, token);
-						socket.close();
-						return;
-					default:
-						System.out.println("Opção inválida.");
-				}
-			}
-
-		} catch (IOException e) {
-			System.err.println("Erro ao conectar ao servidor: " + e.getMessage());
-		}
-	}
-	// }
-
-	public static String putIP(BufferedReader reader) throws IOException {
-		System.out.println("Digite o endereço IP do servidor:");
-		return reader.readLine();
-	}
+        } catch (IOException e) {
+            System.err.println("Erro ao conectar ao servidor: " + e.getMessage());
+        }
+    }
 }
