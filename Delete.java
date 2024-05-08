@@ -18,7 +18,7 @@ public class Delete {
 
         JsonObject data = new JsonObject();
         data.addProperty("email", email);
-        data.addProperty("token", token);
+        requestJson.addProperty("token", token);
         requestJson.add("data", data);
 
         String jsonResponse = Request.sendRequest(requestJson, out, in);
