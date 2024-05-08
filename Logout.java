@@ -12,9 +12,7 @@ public class Logout {
         }
 
         JsonObject requestJson = Request.createRequest("LOGOUT_CANDIDATE");
-        JsonObject data = new JsonObject();
-        data.addProperty("token", token);
-        requestJson.add("data", data);
+        requestJson.addProperty("token", token);
 
         String jsonResponse = Request.sendRequest(requestJson, out, in);
         System.out.println(jsonResponse);
