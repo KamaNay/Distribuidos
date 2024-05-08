@@ -157,14 +157,7 @@ public class Server extends Thread {
             if (user.getEmail().equals(email)) {
                 if (user.getPassword().equals(password)) {
                     // Usuário autenticado com sucesso
-                    String token = JWTValidator.generateToken(user.getEmail(), user.getEmail());
-                    
-                    // Verifica se o token está na lista de tokens inválidos
-                    if (invalidatedTokens.contains(token)) {
-                        JsonObject responseJson = Request.createResponse("LOGIN_CANDIDATE", "INVALID_LOGIN", "");
-                        out.println(Request.toJsonString(responseJson));
-                        return;
-                    }
+                    String token = JWTValidator.generateToken(user.getEmail(), user.getPassword());
 
                     JsonObject responseJson = Request.createResponse("LOGIN_CANDIDATE", "SUCCESS", token);
                     out.println(Request.toJsonString(responseJson));
@@ -246,12 +239,8 @@ public class Server extends Thread {
         out.println(responseJson.toString());
     }
 
-
-    
-
-
     private void handleDelete(JsonObject requestJson, PrintWriter out) throws IOException {
-        String token = requestJson.getAsJsonObject("data").get("token").getAsString();
+        String token = requestJson.get("token").getAsString();
         String email;
         try {
             email = JWTValidator.getIdClaim(token);
@@ -305,7 +294,7 @@ public class Server extends Thread {
         }
     }
     private void handleLogout(JsonObject requestJson, PrintWriter out) throws IOException {
-        String token = requestJson.getAsJsonObject("data").get("token").getAsString();
+        String token = requestJson.get("token").getAsString();
         try {
             JWTValidator.getIdClaim(token);
         } catch (JWTVerificationException e) {
@@ -323,7 +312,7 @@ public class Server extends Thread {
     }
     
     private void handleLookup(JsonObject requestJson, PrintWriter out) throws IOException {
-        String token = requestJson.getAsJsonObject("data").get("token").getAsString();
+        String token = requestJson.get("token").getAsString();
         String email;
         try {
             email = JWTValidator.getIdClaim(token);
