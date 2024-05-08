@@ -13,9 +13,7 @@ public class Read {
         }
 
         JsonObject requestJson = Request.createRequest("LOOKUP_ACCOUNT_CANDIDATE");
-        JsonObject data = new JsonObject();
-        data.addProperty("token", token);
-        requestJson.add("data", data);
+        requestJson.addProperty("token", token);
 
         String jsonResponse = Request.sendRequest(requestJson, out, in);
         JsonObject responseJson = Request.parseJson(jsonResponse);
