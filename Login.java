@@ -2,12 +2,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class Login {
-	
-	public static String login(BufferedReader reader, PrintWriter out, BufferedReader in) throws IOException {
-    	
+    public static String login(BufferedReader reader, PrintWriter out, BufferedReader in, String token) throws IOException {
         System.out.println("Digite o endereço de email:");
         String email = reader.readLine();
 
@@ -21,23 +20,19 @@ public class Login {
         requestJson.add("data", data);
 
         String jsonResponse = Request.sendRequest(requestJson, out, in);
-        System.out.println(jsonResponse);
-        JsonObject response = Request.parseJson(jsonResponse);
-        
-        String status = response.get("status").getAsString();
-
-        switch (status) {
-            case "SUCCESS":
-                return response.getAsJsonObject("data").get("token").getAsString();
-            case "INVALID_PASSWORD":
-                System.out.println("Senha inválida.");
-                break;
-            case "USER_NOT_FOUND":
-                System.out.println("Usuário não encontrado.");
-                break;
-            default:
-                System.out.println("Erro no login.");
+        JsonObject responseJson = Request.parseJson(jsonResponse);
+        if (responseJson.get("status").getAsString().equals("SUCCESS")) {
+            JsonObject dataObject = responseJson.getAsJsonObject("data");
+            if (dataObject != null) {
+                JsonElement tokenElement = dataObject.get("token");
+                if (tokenElement != null) {
+                    token = tokenElement.getAsString();
+                } else {
+                    System.out.println("Token não encontrado na resposta");
+                }
+            }
         }
-        return null;
-    }   
+        System.out.println(jsonResponse);
+        return token;
+    }
 }
