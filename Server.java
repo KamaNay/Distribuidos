@@ -285,6 +285,7 @@ public class Server extends Thread {
                 // Exclusão realizada com sucesso
                 JsonObject responseJson = Request.createResponse("DELETE_ACCOUNT_CANDIDATE", "SUCCESS", "");
                 out.println(Request.toJsonString(responseJson));
+                handleLogout(requestJson, out);
                 return;
             }
         }
