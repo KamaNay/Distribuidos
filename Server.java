@@ -29,16 +29,16 @@ public class Server extends Thread {
         private static final Algorithm algorithm = Algorithm.HMAC256(TOKEN_KEY);
         private static final JWTVerifier verifier = JWT.require(algorithm).build();
 
-        public static String generateToken(String id, String role) {
+        public static String generateToken(int id, String role) {
             return JWT.create()
                     .withClaim("id", id)
                     .withClaim("role", role)
                     .sign(algorithm);
         }
 
-        public static String getIdClaim(String token) throws JWTVerificationException {
+        public static int getIdClaim(String token) throws JWTVerificationException {
             DecodedJWT jwt = verifier.verify(token);
-            return jwt.getClaim("id").asString();
+            return jwt.getClaim("id").asInt();
         }
 
         public static String getRoleClaim(String token) throws JWTVerificationException {
@@ -51,11 +51,29 @@ public class Server extends Thread {
         private String email;
         private String password;
         private String name;
+        private int id;
 
-        public User(String email, String password, String name) {
+        public User(String email, String password, String name, int id) {
             this.email = email;
             this.password = password;
             this.name = name;
+            this.id = id;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+        public void setEmail(String email) {
+        	this.email = email;
+        }
+
+        @SuppressWarnings("unused")
+        public void setId(int id) {
+            this.id = id;
         }
 
         public String getEmail() {
@@ -67,22 +85,13 @@ public class Server extends Thread {
             return password;
         }
 
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
         public String getName() {
             return name;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public int getId() {
+            return id;
         }
-        public void setEmail(String email) {
-        	this.email = email;
-        }
-
-		
     }
 
     @Override
@@ -157,9 +166,10 @@ public class Server extends Thread {
             if (user.getEmail().equals(email)) {
                 if (user.getPassword().equals(password)) {
                     // Usuário autenticado com sucesso
-                    String token = JWTValidator.generateToken(user.getEmail(), user.getPassword());
+                    String token = JWTValidator.generateToken(user.getId(), user.getEmail());
 
                     JsonObject responseJson = Request.createResponse("LOGIN_CANDIDATE", "SUCCESS", token);
+                    System.out.println(responseJson);
                     out.println(Request.toJsonString(responseJson));
                     return;
                 } 
@@ -181,19 +191,34 @@ public class Server extends Thread {
             if (user.getEmail().equals(email)) {
                 // Usuário já existe
                 JsonObject responseJson = Request.createResponse("SIGNUP_CANDIDATE", "USER_EXISTS", "");
+                System.out.println(responseJson + "userexists");
                 out.println(Request.toJsonString(responseJson));
                 return;
             }
         }
 
         // Usuário não encontrado, pode ser cadastrado
-        User newUser = new User(email, password, name);
+        int id = generateId();
+        User newUser = new User(email, password, name, id);
         users.add(newUser);
         writeUserDatabase(users);
 
         // Cadastro realizado com sucesso
         JsonObject responseJson = Request.createResponse("SIGNUP_CANDIDATE", "SUCCESS", "");
+        System.out.println(responseJson + "success");
         out.println(Request.toJsonString(responseJson));
+    }
+
+    private int generateId() throws IOException {
+        int id;
+
+        List<User> users = readUserDatabase();
+        if (users.isEmpty()) {
+            id = 0;
+            return id;
+        }
+        User lastUser = users.get(users.size() - 1);
+        return id = lastUser.getId() + 1;
     }
 
     private void handleUpdate(JsonObject requestJson, PrintWriter out) throws IOException {
@@ -202,10 +227,10 @@ public class Server extends Thread {
         String newEmail = data.get("email").getAsString();
         String password = data.get("password").getAsString();
         String name = data.get("name").getAsString();
+        int id = data.get("id").getAsInt();
 
-        String emailFromToken;
         try {
-            emailFromToken = JWTValidator.getIdClaim(token);
+            id = JWTValidator.getIdClaim(token);
         } catch (JWTVerificationException e) {
             JsonObject responseJson = new JsonObject();
             responseJson.addProperty("operation", "UPDATE_ACCOUNT_CANDIDATE");
@@ -217,7 +242,7 @@ public class Server extends Thread {
 
         List<User> users = readUserDatabase();
         for (User user : users) {
-            if (user.getEmail().equals(emailFromToken)) {
+            if (user.getId() == id) {
                 user.setEmail(newEmail);
                 user.setPassword(password);
                 user.setName(name);
@@ -241,9 +266,9 @@ public class Server extends Thread {
 
     private void handleDelete(JsonObject requestJson, PrintWriter out) throws IOException {
         String token = requestJson.get("token").getAsString();
-        String email;
+        int id;
         try {
-            email = JWTValidator.getIdClaim(token);
+            id = JWTValidator.getIdClaim(token);
         } catch (JWTVerificationException e) {
             JsonObject responseJson = Request.createResponse("DELETE_ACCOUNT_CANDIDATE", "INVALID_TOKEN", "");
             out.println(Request.toJsonString(responseJson));
@@ -252,7 +277,7 @@ public class Server extends Thread {
 
         List<User> users = readUserDatabase();
         for (User user : users) {
-            if (user.getEmail().equals(email)) {
+            if (user.getId() == id) {
                 // Remove o usuário da lista
                 users.remove(user);
                 writeUserDatabase(users);
@@ -275,7 +300,7 @@ public class Server extends Thread {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
-                User user = new User(parts[0], parts[1], parts[2]);
+                User user = new User(parts[0], parts[1], parts[2], Integer.valueOf(parts[3]));
                 users.add(user);
             }
         } catch (FileNotFoundException e) {
@@ -287,7 +312,7 @@ public class Server extends Thread {
     private void writeUserDatabase(List<User> users) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(DATABASE_FILE))) {
             for (User user : users) {
-                String userString = user.getEmail() + "," + user.getPassword() + "," + user.getName();
+                String userString = user.getEmail() + "," + user.getPassword() + "," + user.getName() + "," + user.getId();
                 bw.write(userString);
                 bw.newLine();
             }
@@ -313,9 +338,9 @@ public class Server extends Thread {
     
     private void handleLookup(JsonObject requestJson, PrintWriter out) throws IOException {
         String token = requestJson.get("token").getAsString();
-        String email;
+        int id;
         try {
-            email = JWTValidator.getIdClaim(token);
+            id = JWTValidator.getIdClaim(token);
         } catch (JWTVerificationException e) {
             JsonObject responseJson = Request.createResponse("LOOKUP_ACCOUNT_CANDIDATE", "INVALID_TOKEN", "");
             out.println(Request.toJsonString(responseJson));
@@ -324,12 +349,13 @@ public class Server extends Thread {
 
         List<User> users = readUserDatabase();
         for (User user : users) {
-            if (user.getEmail().equals(email)) {
+            if (user.getId() == id) {
                 // Usuário encontrado, retorna os dados do usuário
                 JsonObject data = new JsonObject();
                 data.addProperty("email", user.getEmail());
                 data.addProperty("name", user.getName());
                 data.addProperty("password", user.getPassword());
+                data.addProperty("id", user.getId());
 
                 JsonObject responseJson = Request.createResponse("LOOKUP_ACCOUNT_CANDIDATE", "SUCCESS", "");
                 responseJson.add("data", data);  // Adicione esta linha
