@@ -227,7 +227,7 @@ public class Server extends Thread {
         String newEmail = data.get("email").getAsString();
         String password = data.get("password").getAsString();
         String name = data.get("name").getAsString();
-        int id = data.get("id").getAsInt();
+        int id;
 
         try {
             id = JWTValidator.getIdClaim(token);
