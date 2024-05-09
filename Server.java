@@ -312,7 +312,7 @@ public class Server extends Thread {
     private void writeUserDatabase(List<User> users) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(DATABASE_FILE))) {
             for (User user : users) {
-                String userString = user.getEmail() + "," + user.getPassword() + "," + user.getName() + "," + user.getId();
+                String userString = user.getEmail() + "," + user.getPassword() + "," + user.getName();
                 bw.write(userString);
                 bw.newLine();
             }
