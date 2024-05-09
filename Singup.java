@@ -15,11 +15,14 @@ public class Signup {
         System.out.println("Digite o nome:");
         String name = reader.readLine();
 
+        int id = 0;
+
         JsonObject requestJson = Request.createRequest("SIGNUP_CANDIDATE");
         JsonObject data = new JsonObject();
         data.addProperty("email", email);
         data.addProperty("password", password);
         data.addProperty("name", name);
+        data.addProperty("id", id);
         requestJson.add("data", data);
 
         String jsonResponse = Request.sendRequest(requestJson, out, in);
