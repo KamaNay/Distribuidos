@@ -20,6 +20,8 @@ public class Update {
         System.out.println("Digite o novo nome:");
         String name = reader.readLine();
 
+        int id = 0;
+
         JsonObject requestJson = new JsonObject();
         requestJson.addProperty("operation", "UPDATE_ACCOUNT_CANDIDATE");
         requestJson.addProperty("token", token);
@@ -27,6 +29,7 @@ public class Update {
         data.addProperty("email", email);
         data.addProperty("password", password);
         data.addProperty("name", name);
+        data.addProperty("id", id);
         requestJson.add("data", data);
 
         out.println(requestJson.toString());
