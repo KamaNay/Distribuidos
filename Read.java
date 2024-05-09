@@ -23,6 +23,7 @@ public class Read {
             	JsonElement passwordElement = dataObject.get("password");
                 JsonElement emailElement = dataObject.get("email");
                 JsonElement nameElement = dataObject.get("name");
+                JsonElement idElement = dataObject.get("id");
                 if (emailElement != null) {
                     System.out.println("Email: " + emailElement.getAsString());
                 }
@@ -31,6 +32,9 @@ public class Read {
                 }
                 if (passwordElement != null) {
                 	System.out.println("Senha: " + passwordElement.getAsString());
+                }
+                if (idElement != null) {
+                	System.out.println("Id: " +  idElement.getAsInt());
                 }
             }
         } else {
