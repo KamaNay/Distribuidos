@@ -17,6 +17,20 @@ public class Client {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
             // Loop principal do cliente
+            int type = 0;
+            while (true) {
+                System.out.println("1 - Cliente | 2 - Empresa");
+                try {
+                    type = Integer.parseInt(reader.readLine());
+                    if (type >= 1 && type <= 2) {
+                        break;  // Sai do loop se o valor for válido
+                    } else {
+                        System.out.println("Opção inválida. Por favor, digite novamente.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Entrada inválida. Por favor, digite um número.");
+                }
+            }
             while (true) {
                 System.out.println("Escolha uma opção:");
                 System.out.println("1. Login");
@@ -36,26 +50,50 @@ public class Client {
 
                 switch (option) {
                     case 1:
-                        token = Login.login(reader, out, in, token);
+                        if (type == 1) {
+                            token = Login.login(reader, out, in, token);
+                        }else {
+                            token = LoginC.login(reader, out, in, token);
+                        }
                         break;
                     case 2:
+                    if (type == 1) {
                         Signup.signup(reader, out, in);
+                    }else {
+                        SignupC.signup(reader, out, in);
+                    }
                         break;
                     case 3:
+                    if (type == 1) {
                         Update.update(reader, out, in, token);
+                    }else {
+                        UpdateC.update(reader, out, in, token);
+                    }   
                         break;
                     case 4:
+                    if (type == 1) {
                         Delete.delete(reader, out, in, token);
+                    }else {
+                        DeleteC.delete(reader, out, in, token);
+                    }
                         break;
                     case 5:
                         System.out.println("Encerrando o cliente...");
                         socket.close();
                         return;
                     case 6:
+                    if (type == 1) {
                         token = Logout.logout(reader, out, in, token);
+                    }else {
+                        token = LogoutC.logout(reader, out, in, token);
+                    }
                         break;
                     case 7:
+                    if (type == 1) {
                         Read.read(reader, out, in, token);
+                    }else {
+                        ReadC.read(reader, out, in, token);
+                    }
                         break;
                     default:
                         System.out.println("Opção inválida. Por favor, digite novamente.");
