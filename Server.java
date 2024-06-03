@@ -183,7 +183,7 @@ public class Server extends Thread {
                 }
 
                 if (jsonMessage != null) {
-                    fileWriter.write(jsonMessage);
+                    fileWriter.write("recebido: " + jsonMessage);
                     fileWriter.newLine();
                     fileWriter.flush();
 
@@ -261,7 +261,9 @@ public class Server extends Thread {
                     String token = JWTValidator.generateToken(user.getId(), user.getEmail());
 
                     JsonObject responseJson = Request.createResponse("LOGIN_CANDIDATE", "SUCCESS", token);
-                    System.out.println(responseJson);
+                    fileWriter.write("enviado: " + responseJson);
+                    fileWriter.newLine();
+                    fileWriter.flush();
                     out.println(Request.toJsonString(responseJson));
                     return;
                 }
@@ -285,7 +287,9 @@ public class Server extends Thread {
                     String token = JWTValidator.generateToken(company.getId(), company.getEmail());
 
                     JsonObject responseJson = Request.createResponse("LOGIN_RECRUITER", "SUCCESS", token);
-                    System.out.println(responseJson);
+                    fileWriter.write("enviado: " + responseJson);
+                    fileWriter.newLine();
+                    fileWriter.flush();
                     out.println(Request.toJsonString(responseJson));
                     return;
                 }
@@ -305,15 +309,17 @@ public class Server extends Thread {
         List<User> users = readUserDatabase();
         for (User user : users) {
             if (user.getEmail().equals(email)) {
-                // Empresa já existe
+                // Cliente já existe
                 JsonObject responseJson = Request.createResponse("SIGNUP_CANDIDATE", "USER_EXISTS", "");
-                System.out.println(responseJson + "userexists");
+                fileWriter.write("enviado: " + responseJson + "userexists");
+                fileWriter.newLine();
+                fileWriter.flush();
                 out.println(Request.toJsonString(responseJson));
                 return;
             }
         }
 
-        // Empresa não encontrado, pode ser cadastrado
+        // Cliente não encontrado, pode ser cadastrado
         int id = generateId();
         User newUser = new User(email, password, name, id);
         users.add(newUser);
@@ -321,7 +327,9 @@ public class Server extends Thread {
 
         // Cadastro realizado com sucesso
         JsonObject responseJson = Request.createResponse("SIGNUP_CANDIDATE", "SUCCESS", "");
-        System.out.println(responseJson + "success");
+        fileWriter.write("enviado: " + responseJson + "success");
+        fileWriter.newLine();
+        fileWriter.flush();
         out.println(Request.toJsonString(responseJson));
     }
 
@@ -336,9 +344,11 @@ public class Server extends Thread {
         List<Company> companies = readCompanyDatabase();
         for (Company company : companies) {
             if (company.getEmail().equals(email)) {
-                // Usuário já existe
+                // Empresa já existe
                 JsonObject responseJson = Request.createResponse("SIGNUP_RECRUITER", "USER_EXISTS", "");
-                System.out.println(responseJson + "userexists");
+                fileWriter.write("enviado: " + responseJson + "userexists");
+                fileWriter.newLine();
+                fileWriter.flush();
                 out.println(Request.toJsonString(responseJson));
                 return;
             }
@@ -352,7 +362,9 @@ public class Server extends Thread {
 
         // Cadastro realizado com sucesso
         JsonObject responseJson = Request.createResponse("SIGNUP_RECRUITER", "SUCCESS", "");
-        System.out.println(responseJson + "success");
+        fileWriter.write("enviado: " + responseJson + "success");
+        fileWriter.newLine();
+        fileWriter.flush();
         out.println(Request.toJsonString(responseJson));
     }
 
