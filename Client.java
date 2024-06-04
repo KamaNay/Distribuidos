@@ -16,7 +16,6 @@ public class Client {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-            // Loop principal do cliente
             int type = 0;
             while (true) {
                 System.out.println("1 - Cliente | 2 - Empresa");
@@ -31,6 +30,7 @@ public class Client {
                     System.out.println("Entrada inválida. Por favor, digite um número.");
                 }
             }
+            // Loop principal do cliente
             while (true) {
                 System.out.println("Escolha uma opção:");
                 System.out.println("1. Login");
