@@ -1,0 +1,41 @@
+create database SD;
+use SD;
+show tables;
+select * from users;
+select * from companies;
+select * from skilldataset;
+select * from jobdataset;
+select * from skills;
+select * from skillset;
+select * from experience;
+select * from jobs;
+select * from jobset;
+select * from experiencej;
+CREATE TABLE IF NOT EXISTS skilldataset (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    skill VARCHAR(50) NOT NULL);
+INSERT INTO skilldataset (skill) VALUES
+    ('NodeJs'),
+    ('JavaScript'),
+    ('Java'),
+    ('C'),
+    ('HTML'),
+    ('CSS'),
+    ('React'),
+    ('React Native'),
+    ('TypeScript'),
+    ('Ruby');
+CREATE TABLE IF NOT EXISTS jobdataset (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    skill VARCHAR(50) NOT NULL);
+INSERT INTO jobdataset (skill) VALUES
+    ('NodeJs'),
+    ('JavaScript'),
+    ('Java'),
+    ('C'),
+    ('HTML'),
+    ('CSS'),
+    ('React'),
+    ('React Native'),
+    ('TypeScript'),
+    ('Ruby');
