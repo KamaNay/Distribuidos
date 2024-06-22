@@ -41,7 +41,7 @@ public class UpdateJob {
             requestJson.addProperty("token", token);
             JsonObject data = new JsonObject();
             data.addProperty("id", id);
-            data.addProperty("Skill", newSkill);
+            data.addProperty("skill", newSkill);
             data.addProperty("experience", experience);
             requestJson.add("data", data);
 
