@@ -11,6 +11,7 @@ select * from experience;
 select * from jobs;
 select * from jobset;
 select * from experiencej;
+select * from selected;
 CREATE TABLE IF NOT EXISTS skilldataset (
     id INT AUTO_INCREMENT PRIMARY KEY,
     skill VARCHAR(50) NOT NULL);
